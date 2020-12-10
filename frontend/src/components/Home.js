@@ -1,8 +1,10 @@
 import React from 'react';
 
-function Home() {
-    render (
-
+const Home = () => {
+    return(
+        <div className="container">
+            <p>Hello Home</p>
+        </div>
     );
 }
 

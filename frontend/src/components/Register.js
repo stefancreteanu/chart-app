@@ -1,52 +1,67 @@
 import React from 'react';
 
-class Login extends React.Component {
+class Register extends React.Component {
     constructor(props) {
         super(props);
         this.state =  {
-            logInEmail: '',
-            logInPassword: ''
+            email: '',
+            password: '',
+            name: ''
         }
     } 
 
+    onNameChange = (event) => {
+        this.setState({name: event.target.value})
+    }
+
     onEmailChange = (event) => {
-        this.setState({logInEmail: event.target.value})
+        this.setState({email: event.target.value})
     }
 
     onPasswordChange = (event) => {
-        this.setState({logInPassword: event.target.value})
+        this.setState({password: event.target.value})
     }
 
     onSubmitLogin = () => {
-        fetch('http://localhost:5500/login', {
+        fetch('http://localhost:5500/register', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                email: this.state.logInEmail,
-                password: this.state.logInPassword
+                email: this.state.email,
+                password: this.state.password,
+                name: this.state.name
             })
         })
             .then(response => response.json())
             .then(user => {
                 if(user.id) {
+                    this.props.loadUser(user);
                     this.props.onRouteChange('home');
                 }
             })
     }
 
     render() {
-        const { onRouteChange } = this.props;
         return (
             <div className="main">
                 <div className="logo">
                     <h1 className="logo-text">Stocks Managing App</h1>
                 </div>
                 <div className="form">
-                    <div action="login" className="form-item">
+                    <div className="form-item">
                         <div className="login">
-                            <h3>Log In</h3>
+                            <h3>Register</h3>
                         </div>
                         <div className="credentials">
+                            <div className="name">
+                                <input 
+                                    className="input"
+                                    type="text" 
+                                    placeholder="Username"
+                                    name="username"    
+                                    onChange={this.onNameChange}
+                                />
+                            </div>
                             <div className="email">
                                 <input 
                                     className="input" 
@@ -75,12 +90,6 @@ class Login extends React.Component {
                                 onClick={this.onSubmitLogin} 
                                 type="submit" 
                                 className="btn" 
-                                value="Log In"
-                            />
-                            <input 
-                                onClick={() => onRouteChange('register')} 
-                                type="submit" 
-                                className="btn" 
                                 value="Register"
                             />
                         </div>
@@ -91,4 +100,4 @@ class Login extends React.Component {
     }
 }
 
-export default Login;
+export default Register;
