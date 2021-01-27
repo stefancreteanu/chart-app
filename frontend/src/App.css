@@ -11,21 +11,26 @@ body,html {
   height: 100%;
   width: 100%;
   overflow-x: hidden;
+}
+
+.App { /*change to .main*/
   background-image: url('./imgs/background.png');
-  background-size: cover;
+  height: 100%; 
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;  
 }
 
 .form {
-  height: 60%;
-  margin-top: 0px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  padding: 70px;
+  top: 50px;
+  left: 120px;
 }
 
 .form-item {
   border: 1px solid rgb(48, 48, 48);
-  border-radius: 10px;
+  border-radius: 20px;
   padding: 5px;
   width: 300px;
   height: 400px;
@@ -33,8 +38,8 @@ body,html {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-color: rgba(255,255,255, 0.20);
-  box-shadow: 0 0 50px 5px rgba(0, 0, 0, 0.63);
+  background-color: rgba(95, 95, 95, 0.2);
+  box-shadow: 0 0 30px 2px rgba(255, 255, 255, 0.63);
 }
 
 .input {
@@ -54,6 +59,7 @@ body,html {
   align-items: center;
   margin-top: 10px;
   padding: 0;
+  color: white;
 }
 
 .check-area > p {
@@ -68,6 +74,10 @@ body,html {
 }
 
 .btn {
+  text-align: center;
+  background-color: #FFF;
+  text-decoration: none;
+  color: #000;
   width: 150px;
   margin: 20px;
   font-size: 15px;
@@ -126,9 +136,10 @@ body,html {
 }
 
 .nav-btn {
-  width: 100px;
+  width: 120px;
   height: 35px;
   margin: 20px;
+  padding: 5px;
   font-size: 15px;
   outline: none;
   border: none;
@@ -136,21 +147,20 @@ body,html {
   background-color: rgba(255,255,255, 0);
   filter: none;
   font-size: 18px;
+  color: #FFF;
 }
 
 .nav-btn:hover {
   border: black;
-  background-color: rgba(255,255,255, 0.3);
-  box-shadow: 0 0 20px 1px rgb(0, 0, 0);
-  width: 120px;
-  height: 45px;
+  /* background-color: rgba(255,255,255, 0.3); */
+  text-shadow: 0px 0px 10px #000;
 }
 
 nav {
-  background-color: rgba(255,255,255, 0.30);
+  /* background-color: rgba(255,255,255, 0.30); */
   position: absolute;
   width: 100%;
-  height: 75px;
+  /* height: 75px; */
 }
 
 .container {
