@@ -2,21 +2,32 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const Register = ({history}) => {
-    const [Name, setName] = useState('')
+    const [FirstName, setFirstName] = useState('')
+    const [LastName, setLastName] = useState('')
     const [Email, setEmail] = useState('')
     const [Password, setPassword] = useState('')
+    const [PhoneNumber, setPhoneNumber] = useState('')
+    const [Gender, setGender] = useState('')
     
     const register = () => {
-        axios.post("http://localhost:5500/register", {
-        name: Name,
-        email: Email,
-        password: Password
-        }).then((response) => {
-            history.push('/login')        
-            window.location.reload();
-            console.log(response);
-        }) 
+        if(Gender === 'Male' || Gender === 'Female') {
+            axios.post("http://localhost:5500/register", {
+            firstName: FirstName,
+            lastName: LastName,
+            email: Email,
+            password: Password,
+            phone: PhoneNumber,
+            gender: Gender
+            }).then(() => {
+                history.push('/login')        
+                window.location.reload();
+            })
+        } else if(Gender === '' && Gender === 'Gender') {
+            console.log("error");
+        }
+        
     }
+
     return (
         <div className="main">
             <div className="logo">
@@ -32,10 +43,21 @@ const Register = ({history}) => {
                             <input 
                                 className="input"
                                 type="text" 
-                                placeholder="Username"
+                                placeholder="First Name"
                                 name="username"    
                                 onChange = {(e) => {
-                                    setName(e.target.value)
+                                    setFirstName(e.target.value)
+                                }}
+                            />
+                        </div>
+                        <div className="name">
+                            <input 
+                                className="input"
+                                type="text" 
+                                placeholder="Last Name"
+                                name="username"    
+                                onChange = {(e) => {
+                                    setLastName(e.target.value)
                                 }}
                             />
                         </div>
@@ -61,6 +83,24 @@ const Register = ({history}) => {
                                 }}
                             />
                         </div>
+                        <div className="phone">
+                            <input 
+                                    className="input" 
+                                    type="text" 
+                                    name="phone"
+                                    placeholder="Phone number"
+                                    onChange = {(e) => {
+                                        setPhoneNumber(e.target.value)
+                                        console.log(PhoneNumber)
+                                    }}
+                                />
+                        </div>
+                        <select name="Gender" className='drop' defaultValue="Gender" onChange= {(e) => {setGender(e.target.value); console.log(Gender)}}>
+                            <option value="Gender">Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
                     </div>
                     <div className="check-area">
                         <input type="checkbox"/>

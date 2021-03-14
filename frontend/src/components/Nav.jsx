@@ -1,5 +1,5 @@
 import React from 'react';
-import useLoginStatus from '../hooks/useLoginStatus'
+import useLoginStatus from '../hooks/useLoginStatus';
 import {Link} from 'react-router-dom';
 
 const Nav = () => {
@@ -13,62 +13,41 @@ const Nav = () => {
 
     if(isLoggedIn) {
         return (
-            <nav>
-                <Link to='/'>
-                    <input
-                        type="submit"
-                        value="Home"
-                        className="nav-btn"    
-                    />
-                </Link>
-                <Link to='/profile'>
-                    <input
-                        type="submit"
-                        value="Profile"
-                        className="nav-btn"    
-                    />
-                </Link>
-                <Link to='/dashboard'>
-                    <input
-                        type="submit"
-                        value="Dashboard"
-                        className="nav-btn"    
-                    />
-                </Link>
+            <div className="nav">
+                <div>
+                    <Link className='h4-logo' to='/'>
+                        <h4>STOCKS</h4>
+                    </Link>
+                </div>
+                <div className="wrapper">
+                    <div className="nav-bar">
+                        <nav>
+                            <Link to='/'>
+                                <button className="nav-btn">Home</button>    
+                            </Link>
+                            <Link to='/profile'>
+                                <button className="nav-btn">Profile</button>    
+                            </Link>
+                            <Link to='/dashboard'>
+                                <button className="nav-btn">My Charts</button>   
+                            </Link>
+                        </nav>
+                    </div>
+                </div>
                 <Link to='/login' onClick={logout}>
-                    <input 
-                        type="submit"
-                        value="Log out"
-                        className="nav-btn"
-                    />
+                    <button className="nav-btn">Log out</button>
                 </Link>
-            </nav>
+            </div>
         )
     } else {
         return (
-            <nav>
-                <Link to='/'>
-                    <input
-                        type="submit"
-                        value="Home"
-                        className="nav-btn"    
-                    />
-                </Link>
-                <Link to='/profile'>
-                    <input
-                        type="submit"
-                        value="Profile"
-                        className="nav-btn"    
-                    />
-                </Link>
-                <Link to='/dashboard'>
-                    <input
-                        type="submit"
-                        value="Dashboard"
-                        className="nav-btn"    
-                    />
-                </Link>
-            </nav>
+            <div className="nav">
+                <div className="nav-logo">
+                    <Link className='h4-logo' to='/'>
+                        <h4>STOCKS</h4>
+                    </Link>
+                </div>
+            </div>
         )
     }
 }

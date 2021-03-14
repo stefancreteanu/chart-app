@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 const Login = ({history}) => {
     const [Email, setEmail] = useState('')
     const [Password, setPassword] = useState('')
+    const [showPass, setShowPass] = useState(false);
     const login = () => {
         axios.post("http://localhost:5500/login", {
         email: Email,
@@ -25,6 +26,10 @@ const Login = ({history}) => {
             history.push('/profile');
         }
     })
+
+    const passwordVisibility = () => {
+        setShowPass(showPass ? false : true);
+    }
 
     return (
         <div className="main">
@@ -51,17 +56,17 @@ const Login = ({history}) => {
                         <div className="pass">
                             <input 
                                 className="input" 
-                                type="password" 
                                 name="password"
                                 placeholder="Password"
                                 onChange = {(e) => {
                                     setPassword(e.target.value)
                                 }}
+                                type={showPass ? 'text' : 'password'}
                             />
                         </div>
                     </div>
                     <div className="check-area">
-                        <input type="checkbox"/>
+                        <input type="checkbox" onClick={passwordVisibility}/>
                         <p>Show Password</p>
                     </div>
                     <div className="buttons">

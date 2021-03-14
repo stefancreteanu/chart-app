@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const isAuthorized = require('./middlewares/authorization')
 require('dotenv').config();
 const saltRounds = 10;
+const port = 5500;
 
 const db = knex({
     client: 'pg',
@@ -47,48 +48,78 @@ app.post('/login', async (req, res) => {
     }
 })
 
-app.post('/register', (req, res) => {
-        const { email, name, password } = req.body;
-        bcrypt.hash(password, saltRounds, (err, hash) => {
-            if(err) {
-                console.log(err);
-            }
-
-            db.insert({
-                name: name,
-                email: email,
-                hash: hash,
-                joined: new Date()
-            }).into('login')
-                .returning('*')
-                .then(user => {
-                    res.json(user[0])
-                    console.log(user);
-            })
-        });
+app.post('/register', async (req, res) => {
+        try {
+            const { email, lastName, firstName, phone, password, gender } = req.body;
+            bcrypt.hash(password, saltRounds, (err, hash) => {
+                if(err) {
+                    console.log(err);
+                }
+                db.insert({
+                    firstname: firstName,
+                    lastname: lastName,
+                    email: email,
+                    hash: hash,
+                    phone: phone,
+                    gender: gender
+                }).into('login')
+                    .returning('*')
+                    .then(user => {
+                        res.json(user[0])
+                        console.log(user);
+                })
+            });
+        } catch (err) {
+            console.log(err);
+        }
 })
 
-app.get('/profile/', isAuthorized, async (req, res) => {
+app.get('/profile', isAuthorized, async (req, res) => {
     try {       
         const id = req.user._id;
-        const user = await db.select('name', 'email', 'joined').from('login').where('id', '=', id)
+        const user = await db.select('firstname', 'lastname', 'email', 'phone', 'gender').from('login').where('id', '=', id)
         const data =  user[0];
         const email = data.email;
-        const username = data.name;
-        const joined = data.joined;
+        const firstName = data.firstname;
+        const lastName = data.lastname;
+        const phone = data.phone;
+        const gender = data.gender;
         res.json({
             id,
             email,
-            username,
-            joined
+            firstName,
+            lastName,
+            phone,
+            gender
         }).status(200);
     } catch (err) {
         console.log(err);
     }
 })
 
+app.post('/create-table', async (req, res) => {
+    try {
+        // const id = req.user._id
+        const id = 1;
+        const { chartName, labels, dataLabel, data } = req.body
+        console.log(chartName, labels, data, dataLabel);
+        db.insert({
+            id: id,
+            chartname: chartName,
+            labels: labels,
+            chartdata: data,
+            datalabel: dataLabel
+        }).into('chart')
+            .returning('*')
+            .then(chart => {
+                res.json(chart[0])
+                console.log(chart);
+            })
+    } catch (err) {
+        console.log(err)
+    }
+})
 
-
-app.listen(5500, () => {
-    console.log('SERVER IS RUNNING ON PORT 5500');
+app.listen(port, () => {
+    console.log(`SERVER IS RUNNING ON PORT ${port}`);
 })
