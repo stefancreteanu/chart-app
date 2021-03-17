@@ -99,16 +99,18 @@ app.get('/profile', isAuthorized, async (req, res) => {
 
 app.post('/create-table', async (req, res) => {
     try {
-        // const id = req.user._id
-        const id = 1;
-        const { chartName, labels, dataLabel, data } = req.body
-        console.log(chartName, labels, data, dataLabel);
+        // const id = req.user._id  
+        const { chartName, labels } = req.body
+        
+        // labels = JSON.parse(labels);
+        // dataLabel = JSON.parse(dataLabel);
+        // data = JSON.parse(data);
+        
+        console.log(labels);
+
         db.insert({
-            id: id,
             chartname: chartName,
-            labels: labels,
-            chartdata: data,
-            datalabel: dataLabel
+            labels: JSON.stringify(labels)
         }).into('chart')
             .returning('*')
             .then(chart => {
@@ -117,6 +119,17 @@ app.post('/create-table', async (req, res) => {
             })
     } catch (err) {
         console.log(err)
+    }
+})
+
+app.get('/get-chart', async (req, res) => {
+    try {
+        const chart = await db.select('chartname', 'labels').from('chart');
+        res.json({
+            chart
+        }).status(200)
+    } catch (err) {
+        console.log(err);
     }
 })
 

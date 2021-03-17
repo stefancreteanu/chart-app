@@ -237,6 +237,14 @@ h4:hover {
   align-items: center;
 }
 
+.chart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 500px;
+  height: 500px;
+}
+
 .chart-form {
   display: flex;
   justify-content: center;
