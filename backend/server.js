@@ -9,6 +9,20 @@ const isAuthorized = require('./middlewares/authorization')
 require('dotenv').config();
 const saltRounds = 10;
 const port = 5500;
+const mongoose = require('mongoose');
+
+const app = express();
+
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(cors());
+
+const uri = process.env.ATLAS_URI;
+mongoose.connect(uri, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
+const connection = mongoose.connection;
+connection.once('open', () => {
+    console.log('MongoDB connected');
+})
 
 const db = knex({
     client: 'pg',
@@ -19,12 +33,6 @@ const db = knex({
         database: 'gestiune'
     }
 })
-
-const app = express();
-
-app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(cors());
 
 app.post('/login', async (req, res) => {
     try {
@@ -97,28 +105,9 @@ app.get('/profile', isAuthorized, async (req, res) => {
     }
 })
 
-app.post('/create-table', async (req, res) => {
-    try {
-        // const id = req.user._id
-        const id = 1;
-        const { chartName, labels, dataLabel, data } = req.body
-        console.log(chartName, labels, data, dataLabel);
-        db.insert({
-            id: id,
-            chartname: chartName,
-            labels: labels,
-            chartdata: data,
-            datalabel: dataLabel
-        }).into('chart')
-            .returning('*')
-            .then(chart => {
-                res.json(chart[0])
-                console.log(chart);
-            })
-    } catch (err) {
-        console.log(err)
-    }
-})
+const chartRouter = require('./routes/charts');
+
+app.use('/charts', chartRouter);
 
 app.listen(port, () => {
     console.log(`SERVER IS RUNNING ON PORT ${port}`);

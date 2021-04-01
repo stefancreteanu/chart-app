@@ -5,7 +5,7 @@ import Home from './components/Home';
 import Nav from './components/Nav';
 import Register from './components/Register';
 import Profile from './components/Profile';
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/Dashboard/Dashboard';
 import {BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 function App () {
