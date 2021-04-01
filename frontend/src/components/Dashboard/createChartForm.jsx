@@ -1,42 +1,22 @@
-import React, {useEffect, useState} from 'react';
-import useLoginStatus from '../hooks/useLoginStatus';
-import {Bar, Line, Pie} from 'react-chartjs-2';
+import React, {useState} from 'react';
 import axios from 'axios';
 
-const Dashboard = ({history}) => {
-    const token = window.localStorage.getItem('token');
-    const isLoggedIn = useLoginStatus();
+const ChartForm = () => {
+    const [labels, setLabels] = useState([{ Label: "" }]);
+    const [data2, setData] = useState([{ Data: ""}]);
     const [chartName, setChartName] = useState('');
-    const [labels, setLabels] = useState([{ Label: "", DataLabel: "", Data: "" }]);
-    const [chartData, setChartData] = useState([]);
-
-    const getChart = () => {
-        axios.get('http://localhost:5500/get-chart')
-            .then((response) => {
-                const _chart = response.data.chart[0].labels;        
-                for(const linie in _chart) {
-                    setChartData([_chart[linie].Label]);
-                    console.log(_chart[linie].Label)
-                    console.log(chartData);
-                }
-            })
-    }
-
-    useEffect(() => {
-        if(!isLoggedIn) {
-            history.push('/login');
-        }
-        getChart();
-    }, [history, isLoggedIn])
+    const [dataLabel, setDataLabel] = useState('');
 
     const createChart = () => {
-        axios.post("http://localhost:5500/create-table", {
+        axios.post("http://localhost:5500/charts/add", {
             chartName: chartName,
             labels: labels,
+            datasetData: data2,
+            datasetLabel: dataLabel
         }).then(() => {
             window.location.reload()
         })
-    }    
+    }   
 
     const handleLabelInput = (e, index) => {
         const { name, value } = e.target;
@@ -45,16 +25,22 @@ const Dashboard = ({history}) => {
         setLabels(list); 
     };
 
+    const handleDataInput = (e, index) => {
+        const { name, value } = e.target;
+        const list = [...data2];
+        list[index][name] = value;
+        setData(list);
+    }
+
     const handleRemoveClick = index => {
       const list = [...labels];
-      
       list.splice(index, 1);
-
       setLabels(list);
     };
    
     const handleAddClick = () => {
-      setLabels([...labels, { Label: "", DataLabel: "", Data: "" }]);
+      setLabels([...labels, { Label: "" }]);
+      setData([...data2, { Data: "" }]);
     };
 
     return (
@@ -70,6 +56,15 @@ const Dashboard = ({history}) => {
                             setChartName(e.target.value)
                         }}    
                     />
+                    <input
+                        key='3'
+                        name="DataLabel"
+                        placeholder="Data Label"
+                        className="chart-input"
+                        onChange= {(e) => {
+                            setDataLabel(e.target.value)
+                        }}
+                    />                
                 </div>
                 <div className="data-input">
                     <div className="label">
@@ -89,36 +84,18 @@ const Dashboard = ({history}) => {
                                     placeholder="Data"
                                     className="chart-input"
                                     value={x.data}
-                                    onChange={e => handleLabelInput(e, i)}
+                                    onChange={e => handleDataInput(e, i)}
                                 /> 
-                                <input
-                                    key='3'
-                                    name="DataLabel"
-                                    placeholder="Data Label"
-                                    className="chart-input"
-                                    value={x.dataLabel}
-                                    onChange= {e => handleLabelInput(e, i)}
-                                    />
-                                    {labels.length - 1 === i && <button 
+                                {labels.length - 1 === i && <button 
                                         className="square-btn" 
                                         onClick={handleAddClick}>+</button>}
-                                    {labels.length !== 1 && <button
+                                {labels.length !== 1 && <button
                                         className="square-btn"
-                                        onClick={() => handleRemoveClick(i)}>X</button>} 
+                                        onClick={() => handleRemoveClick(i)}>X</button>}
                             </div>
                             );
                         })}
                     </div>   
-                </div>
-                <div className="chart">
-                    <Bar
-                        data={{
-                            labels: [],
-                            datasets: [{
-                                label: '# of Votes'
-                            }]
-                        }}
-                    />
                 </div>
                 <button onClick={createChart}>print labels</button>
             </div>
@@ -126,4 +103,4 @@ const Dashboard = ({history}) => {
     )
 }
 
-export default Dashboard;
+export default ChartForm;
