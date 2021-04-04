@@ -9,20 +9,12 @@ const isAuthorized = require('./middlewares/authorization')
 require('dotenv').config();
 const saltRounds = 10;
 const port = 5500;
-const mongoose = require('mongoose');
 
 const app = express();
 
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(cors());
-
-const uri = process.env.ATLAS_URI;
-mongoose.connect(uri, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
-const connection = mongoose.connection;
-connection.once('open', () => {
-    console.log('MongoDB connected');
-})
 
 const db = knex({
     client: 'pg',
@@ -105,9 +97,41 @@ app.get('/profile', isAuthorized, async (req, res) => {
     }
 })
 
-const chartRouter = require('./routes/charts');
+app.post('/user-charts', async (req, res) => {
+    try {
+        const SECRET = process.env.SECRET_TOKEN;
+        const { chartName, labels, datasetData, datasetLabel, headers } = req.body;
+        const token = headers.Authorization;
+        const decoded = jwt.verify(token, SECRET);
+        let userId = decoded._id;
+        await db.insert({
+            chartname: chartName,
+            labels: JSON.stringify(labels),
+            chartdata: JSON.stringify(datasetData),
+            datalabel: datasetLabel,
+            userid: userId
+        }).into('chart')
+            .returning('*')
+            .then(chart => {
+                res.json(chart[0])
+                console.log(chart);
+            })
+    } catch (err) {
+        console.log(err);
+    }
+})
 
-app.use('/charts', chartRouter);
+app.get('/user-charts', isAuthorized, async (req, res) => {
+    try {
+        const id = req.user._id;
+        const chart = await db.select('chartname', 'labels', 'chartdata', 'datalabel').from('chart').where('userid', '=', id);
+        res.json({
+            chart
+        }).status(200);
+    } catch (err) {
+        console.log(err);
+    }
+})
 
 app.listen(port, () => {
     console.log(`SERVER IS RUNNING ON PORT ${port}`);

@@ -10,6 +10,7 @@ const Profile = ({history}) => {
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [gender, setGender]  = useState('');
+    const isLoggedIn = useLoginStatus();
 
     useEffect(() => {
         axios.get('http://localhost:5500/profile', {
@@ -23,15 +24,11 @@ const Profile = ({history}) => {
             setPhone(response.data.phone);
             setGender(response.data.gender);
         })
-    })
-    
-    const isLoggedIn = useLoginStatus();
 
-    useEffect(() => {
         if(!isLoggedIn) {
             history.push('/login');
         }
-    })
+    }, [history, isLoggedIn, token])
 
     return (
         <div className="container">
@@ -48,7 +45,7 @@ const Profile = ({history}) => {
                     </div>
                     <div className="info-boxes">
                         <p>Full name:  <hr/></p>
-                        {firstName}{lastName}
+                        {firstName} {lastName}
                         <p>Email: <hr/></p> 
                         {email}
                         <p>Phone: <hr/></p>
@@ -57,7 +54,6 @@ const Profile = ({history}) => {
                         {gender}
                     </div>
                 </div>
-                <div className="info-card"></div>
             </div>
         </div>
     );
