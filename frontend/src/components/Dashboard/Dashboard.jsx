@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import useLoginStatus from '../../hooks/useLoginStatus';
 import ChartForm from './createChartForm';
 import FetchChart from './fetchChart';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 const Dashboard = ({history}) => {
     const isLoggedIn = useLoginStatus();
@@ -15,8 +17,8 @@ const Dashboard = ({history}) => {
 
     return ( 
         <div className="main">
-            {active === 'notactive' && <button onClick={() => setActive('active')}>Create a new Chart</button>}
-            {active === 'active' && <button onClick={() => setActive('notactive')}>X</button>}
+            {active === 'notactive' && <button onClick={() => setActive('active')} className="btn btn-color">Create a new Chart</button>}
+            {active === 'active' && <button onClick={() => setActive('notactive')} className="xbtn btn btn-color"> <FontAwesomeIcon icon={faTimes} /> </button>}
             <div className="chart-form">
                 {active === 'active' && <ChartForm/>}
             </div>

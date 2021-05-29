@@ -3,12 +3,9 @@ import useLoginStatus from '../hooks/useLoginStatus'
 
 const Home = ({history}) => {
     const isLoggedIn = useLoginStatus();
-    console.log(isLoggedIn)
-    useEffect(() => {
-        if(!isLoggedIn) {
-            history.push('/login')
-        }
-    })
+
+    useEffect(() => { if(!isLoggedIn) { history.push('/login') } })
+    
     return(
         <div className="container">
             <h1>homepage</h1>

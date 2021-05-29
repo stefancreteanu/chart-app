@@ -8,7 +8,6 @@ const Nav = () => {
     const logout = () => {
         window.localStorage.removeItem('token');
         window.location.reload();
-        console.log(isLoggedIn);
     }
 
     if(isLoggedIn) {

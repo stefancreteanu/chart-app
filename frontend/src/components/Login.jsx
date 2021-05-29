@@ -13,8 +13,7 @@ const Login = ({history}) => {
         email: Email,
         password: Password
         }).then((response) => {
-            window.localStorage.setItem('token', response.data.token);
-            history.push(`/profile`)        
+            window.localStorage.setItem('token', response.data.token);      
             window.location.reload();
         }) 
     }
@@ -25,7 +24,7 @@ const Login = ({history}) => {
         if(isLoggedIn) {
             history.push('/profile');
         }
-    })
+    }, [history, isLoggedIn])
 
     const passwordVisibility = () => {
         setShowPass(showPass ? false : true);
@@ -73,13 +72,13 @@ const Login = ({history}) => {
                         <input 
                             onClick={login}
                             type="submit" 
-                            className="btn" 
+                            className="no-margin btn btn-color" 
                             value="Log In"
                         />
                         <Link to='/register'>
                             <input 
                                 type="submit" 
-                                className="btn" 
+                                className="no-margin btn btn-color" 
                                 value="Register"
                             />
                         </Link>

@@ -10,7 +10,7 @@ const Register = ({history}) => {
     const [Gender, setGender] = useState('')
     
     const register = () => {
-        if(Gender === 'Male' || Gender === 'Female') {
+        if(Gender === 'Male' || Gender === 'Female' || Gender === 'Other') {
             axios.post("http://localhost:5500/register", {
             firstName: FirstName,
             lastName: LastName,
@@ -95,7 +95,7 @@ const Register = ({history}) => {
                                     }}
                                 />
                         </div>
-                        <select name="Gender" className='drop' defaultValue="Gender" onChange= {(e) => {setGender(e.target.value); console.log(Gender)}}>
+                        <select name="Gender" className='drop' defaultValue="Gender" onChange= {(e) => {setGender(e.target.value)}}>
                             <option value="Gender">Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>

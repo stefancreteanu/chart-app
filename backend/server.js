@@ -97,25 +97,22 @@ app.get('/profile', isAuthorized, async (req, res) => {
     }
 })
 
-app.post('/user-charts', async (req, res) => {
+app.post('/create-charts', async (req, res) => {
     try {
         const SECRET = process.env.SECRET_TOKEN;
-        const { chartName, labels, datasetData, datasetLabel, headers } = req.body;
+        const { labels, datasetData, datasetLabel, color, title, headers } = req.body;
         const token = headers.Authorization;
         const decoded = jwt.verify(token, SECRET);
         let userId = decoded._id;
         await db.insert({
-            chartname: chartName,
             labels: JSON.stringify(labels),
             chartdata: JSON.stringify(datasetData),
+            color: JSON.stringify(color),
             datalabel: datasetLabel,
-            userid: userId
+            userid: userId,
+            title: title
         }).into('chart')
             .returning('*')
-            .then(chart => {
-                res.json(chart[0])
-                console.log(chart);
-            })
     } catch (err) {
         console.log(err);
     }
@@ -124,10 +121,19 @@ app.post('/user-charts', async (req, res) => {
 app.get('/user-charts', isAuthorized, async (req, res) => {
     try {
         const id = req.user._id;
-        const chart = await db.select('chartname', 'labels', 'chartdata', 'datalabel').from('chart').where('userid', '=', id);
+        const chart = await db.select('id', 'labels', 'chartdata', 'datalabel', 'color', 'title').from('chart').where('userid', '=', id);
         res.json({
             chart
         }).status(200);
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+app.post('/delete-chart', async (req, res) => {
+    try {
+        const id = req.body.id;
+        await db.delete().from('chart').where('id', '=', id);
     } catch (err) {
         console.log(err);
     }

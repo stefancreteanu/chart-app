@@ -5,11 +5,7 @@ import profile_image from '../imgs/business_man.png';
 
 const Profile = ({history}) => {
     const token = window.localStorage.getItem('token');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [gender, setGender]  = useState('');
+    const [user, setUser] = useState('');
     const isLoggedIn = useLoginStatus();
 
     useEffect(() => {
@@ -18,17 +14,13 @@ const Profile = ({history}) => {
                 Authorization: `Bearer ${token}`
             }
         }).then((response) => {
-            setFirstName(response.data.firstName);
-            setLastName(response.data.lastName);
-            setEmail(response.data.email);
-            setPhone(response.data.phone);
-            setGender(response.data.gender);
+            setUser(response.data);
         })
 
         if(!isLoggedIn) {
             history.push('/login');
         }
-    }, [history, isLoggedIn, token])
+    }, [history, isLoggedIn, token, user])
 
     return (
         <div className="container">
@@ -36,7 +28,7 @@ const Profile = ({history}) => {
                 <div className="color-card">
                     <div className="profile-wrapper">
                         <img className='profile-pic' src={profile_image} alt=""/>
-                        <p> Welcome to your profile, <br/>{firstName}!</p>
+                        <p> Welcome to your profile, <br/>{user.firstName}!</p>
                     </div>
                 </div>
                 <div className="user-info">
@@ -45,13 +37,13 @@ const Profile = ({history}) => {
                     </div>
                     <div className="info-boxes">
                         <p>Full name:  <hr/></p>
-                        {firstName} {lastName}
+                        {user.firstName} {user.lastName}
                         <p>Email: <hr/></p> 
-                        {email}
+                        {user.email}
                         <p>Phone: <hr/></p>
-                        {phone}
+                        {user.phone}
                         <p>Gender <hr/></p>
-                        {gender}
+                        {user.gender}
                     </div>
                 </div>
             </div>
