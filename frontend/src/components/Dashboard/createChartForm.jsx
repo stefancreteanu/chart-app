@@ -2,13 +2,14 @@ import React, {useState} from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
+import Button from 'react-bootstrap/Button'
 
 const ChartForm = () => {
     const token = window.localStorage.getItem('token');
     const [labels, setLabels] = useState([{ Label: "" }]);
     const [data2, setData] = useState([{ Data: "" }]);
     const [color, setColor] = useState([{ Color: "" }]);
-    const [dataLabel, setDataLabel] = useState('');
+    const [dataLabel, setDataLabel] = useState("");
     const [title, setTitle] = useState('');
 
     const createChart = () => {
@@ -56,36 +57,38 @@ const ChartForm = () => {
       setLabels([...labels, { Label: "" }]);
       setData([...data2, { Data: "" }]);
       setColor([...color, { Color: "" }])
-    };
+    };   
 
     return (
-        <div className="container">
-            <div className="chart-form">
-                <div className="chart-name">
-                    <input
-                        type="text"
-                        name="DataLabel"
-                        placeholder="Title"
-                        className="data-label-input"
-                        onChange= {(e) => {
-                            setTitle(e.target.value)
-                        }}
-                    />
-                    <input
-                        type="text"
-                        name="DataLabel"
-                        placeholder="Data Label"
-                        className="data-label-input"
-                        onChange= {(e) => {
-                            setDataLabel(e.target.value)
-                        }}
-                    />
-                </div>
-                <div className="data-input">
-                    <div className="label">
-                        {labels.map((x, i) => {
-                            return (
-                            <div className="box">
+        <div className="chart-form">
+            <h4 className="title fs-40" style={{marginBottom: "1.4rem", marginTop: "1rem"}}>
+                Chart form
+            </h4>
+            <div className="chart-title">
+                <input
+                    type="text"
+                    name="Title"
+                    placeholder="Title"
+                    className="chart-input"
+                    onChange= {(e) => {
+                        setTitle(e.target.value)
+                    }}
+                />
+            </div>
+            <div className="chart-datasets">
+                <input
+                type="text"
+                name="DataLabel"
+                placeholder="Dataset Label"
+                className="chart-input"
+                onChange= {(e) => { setDataLabel(e.target.value)} }
+                />
+            </div>
+            <div className="label-container">
+                {labels.map((x, i) => {
+                    return (
+                        <div className="chart-data">
+                            <div className="inputs">
                                 <input
                                     name="Label"
                                     placeholder="Label"
@@ -107,21 +110,20 @@ const ChartForm = () => {
                                     value={x.color}
                                     onChange={e => handleColorInput(e, i)}
                                 /> 
-                                <div className="chart-buttons">
-                                    {labels.length - 1 === i && <button 
-                                            className="plus square-btn" 
-                                            onClick={handleAddClick}> <FontAwesomeIcon icon={faPlus} /> </button>}
-                                    {labels.length !== 1 && <button
-                                            className="minus square-btn"
-                                            onClick={() => handleRemoveClick(i)}> <FontAwesomeIcon icon={faTimes} /> </button>}
-                                </div>
                             </div>
-                            );
-                        })}
-                    </div>   
-                </div>
-                <input onClick={createChart} type="submit" className="btn btn-color" value="Create the chart"/>
+                            <div className="chart-buttons">
+                                {labels.length - 1 === i && <button 
+                                        className="plus round-btn" 
+                                        onClick={handleAddClick}> <FontAwesomeIcon icon={faPlus} /> </button>}
+                                {labels.length > 1 && <button
+                                        className="minus round-btn"
+                                        onClick={() => handleRemoveClick(i)}> <FontAwesomeIcon icon={faTimes} /> </button>}
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
+                <Button variant="dark" className="button" onClick={createChart}>Create the chart</Button>
         </div>
     )
 }

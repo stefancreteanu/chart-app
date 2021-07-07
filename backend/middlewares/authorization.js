@@ -4,7 +4,7 @@ require("dotenv").config();
 const SECRET = process.env.SECRET_TOKEN;
 
 const isAuthorized = (req, res, next) => {
-  const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+  const authHeader = req.headers['authorization'] || req.headers['Authorization'] || req.headers['auth'];
 
   if (typeof authHeader === "string") {
     let token = authHeader;

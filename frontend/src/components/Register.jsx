@@ -1,120 +1,121 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import logo from "../imgs/logo.png"
+import Button from "react-bootstrap/Button"
 
 const Register = ({history}) => {
     const [FirstName, setFirstName] = useState('')
     const [LastName, setLastName] = useState('')
     const [Email, setEmail] = useState('')
     const [Password, setPassword] = useState('')
-    const [PhoneNumber, setPhoneNumber] = useState('')
+    const [username, setUsername] = useState('')
     const [Gender, setGender] = useState('')
+    const [showPass, setShowPass] = useState(false);
     
-    const register = () => {
+    const regUser = () => {
         if(Gender === 'Male' || Gender === 'Female' || Gender === 'Other') {
             axios.post("http://localhost:5500/register", {
             firstName: FirstName,
             lastName: LastName,
             email: Email,
             password: Password,
-            phone: PhoneNumber,
+            username: username,
             gender: Gender
-            }).then(() => {
-                history.push('/login')        
-                window.location.reload();
+            }).then((response) => {
+                if(response.data.message === "Success") {
+                    history.push('/login');
+                }
             })
-        } else if(Gender === '' && Gender === 'Gender') {
-            console.log("error");
         }
-        
+    }
+
+    const passwordVisibility = () => {
+        setShowPass(showPass ? false : true);
     }
 
     return (
-        <div className="main">
-            <div className="logo">
-                <h1 className="logo-text">Stocks Managing App</h1>
-            </div>
+        <div className="reusable-container">
             <div className="form">
-                <div className="form-item">
-                    <div className="login">
-                        <h3>Register</h3>
-                    </div>
-                    <div className="credentials">
-                        <div className="name">
-                            <input 
-                                className="input"
-                                type="text" 
-                                placeholder="First Name"
-                                name="username"    
-                                onChange = {(e) => {
-                                    setFirstName(e.target.value)
-                                }}
-                            />
-                        </div>
-                        <div className="name">
-                            <input 
-                                className="input"
-                                type="text" 
-                                placeholder="Last Name"
-                                name="username"    
-                                onChange = {(e) => {
-                                    setLastName(e.target.value)
-                                }}
-                            />
-                        </div>
-                        <div className="email">
-                            <input 
-                                className="input" 
-                                type="email" 
-                                name="email-address"
-                                placeholder="Email"
-                                onChange = {(e) => {
-                                    setEmail(e.target.value)
-                                }}
-                            />
-                        </div>
-                        <div className="pass">
-                            <input 
-                                className="input" 
-                                type="password" 
-                                name="password"
-                                placeholder="Password"
-                                onChange = {(e) => {
-                                    setPassword(e.target.value)
-                                }}
-                            />
-                        </div>
-                        <div className="phone">
-                            <input 
-                                    className="input" 
-                                    type="text" 
-                                    name="phone"
-                                    placeholder="Phone number"
-                                    onChange = {(e) => {
-                                        setPhoneNumber(e.target.value)
-                                        console.log(PhoneNumber)
-                                    }}
-                                />
-                        </div>
-                        <select name="Gender" className='drop' defaultValue="Gender" onChange= {(e) => {setGender(e.target.value)}}>
-                            <option value="Gender">Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div className="check-area">
-                        <input type="checkbox"/>
-                        <p>Show Password</p>
-                    </div>
-                    <div className="buttons">
-                        <input 
-                            onClick={register} 
-                            type="submit" 
-                            className="btn" 
-                            value="Register"
-                        />
-                    </div>
+                <div className="logo">
+                    <img src={logo} className="image" alt="logo" />
                 </div>
+                    <div className="credentials">
+                        <h4 className="title">Register</h4>
+                            <form className="credentials">
+                                <div className="rows">
+                                    <div className="st-row">
+                                        <input 
+                                            className="input"
+                                            type="text" 
+                                            placeholder="First Name*"
+                                            name="firstname"    
+                                            onChange = {(e) => {
+                                                setFirstName(e.target.value)
+                                            }}
+                                            required
+                                        />
+                                        <input 
+                                            className="input"
+                                            type="text" 
+                                            placeholder="Last Name*"
+                                            name="lastname"    
+                                            onChange = {(e) => {
+                                                setLastName(e.target.value)
+                                            }}
+                                            required
+                                        />
+                                        <input 
+                                                className="input" 
+                                                type="text" 
+                                                name="username"
+                                                placeholder="Username*"
+                                                onChange = {(e) => {
+                                                    setUsername(e.target.value)
+                                                }}
+                                                required
+                                            />
+                                        {/* <p className="error-message">{error}</p> */}
+                                    </div>
+                                    <div className="nd-row">
+                                        <input 
+                                            className="input" 
+                                            type="email" 
+                                            name="email"
+                                            placeholder="Email*"
+                                            onChange = {(e) => {
+                                                setEmail(e.target.value)
+                                            }}
+                                            required
+                                        />
+                                        <input 
+                                        className="input" 
+                                        type={showPass ? 'text' : 'password'}
+                                        name="password"
+                                        placeholder="Password*"
+                                        onChange = {(e) => {
+                                            setPassword(e.target.value)
+                                        }}
+                                        required
+                                    />
+                                        <select name="gender" className="input" defaultValue="Gender" onChange= {(e) => {setGender(e.target.value)}}>
+                                            <option value="Gender" disabled>Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="check-area">
+                                    <input type="checkbox" onClick={passwordVisibility}/>
+                                    <p>Show Password</p>
+                                </div>
+                                <div>
+                                    <Button variant="primary" onClick={regUser}>
+                                        Register
+                                    </Button>
+                                </div>
+                            </form>         
+                    </div>
             </div>    
         </div>
     )

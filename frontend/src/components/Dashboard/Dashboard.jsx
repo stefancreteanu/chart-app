@@ -1,32 +1,35 @@
-import React, {useEffect, useState} from 'react';
-import useLoginStatus from '../../hooks/useLoginStatus';
+import React, {useContext, useState} from 'react';
 import ChartForm from './createChartForm';
 import FetchChart from './fetchChart';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import Button from 'react-bootstrap/Button'
+import { AuthContext } from '../../hooks/useLoginStatus';
+import { Redirect } from 'react-router';
 
-const Dashboard = ({history}) => {
-    const isLoggedIn = useLoginStatus();
+const Dashboard = () => {
     const [active, setActive] = useState('notactive');
 
-    useEffect(() => {
-        if(!isLoggedIn) {
-            history.push('/login');
-        }
-    }, [history, isLoggedIn])
+    const {isLoggedIn} = useContext(AuthContext)
 
-    return ( 
+    return isLoggedIn ? ( 
         <div className="main">
-            {active === 'notactive' && <button onClick={() => setActive('active')} className="btn btn-color">Create a new Chart</button>}
-            {active === 'active' && <button onClick={() => setActive('notactive')} className="xbtn btn btn-color"> <FontAwesomeIcon icon={faTimes} /> </button>}
-            <div className="chart-form">
+            {active === 'notactive' && 
+                <Button variant="dark" expand="lg"  onClick={() => setActive('active')} >
+                    Create a new Chart
+                </Button>}
+            {active === 'active' && 
+                <Button variant="dark" className="xbtn" onClick={() => setActive('notactive')}> 
+                    <FontAwesomeIcon icon={faTimes} /> 
+                </Button>}
+            <div>
                 {active === 'active' && <ChartForm/>}
             </div>
             <div className="chart">
                 {active === 'notactive' && <FetchChart/>}  
             </div>  
         </div>     
-    )
+    ): <Redirect to="login" />
 }
 
 export default Dashboard;
