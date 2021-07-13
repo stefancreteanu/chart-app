@@ -166,8 +166,8 @@ const FetchChart = () => {
                     </select>
                 </div>
                 <div className="charts"> 
-                    {chartsData.map(chartData => { // eslint-disable-next-line
-                        chartsOptions.map(chart => { 
+                    {chartsData.forEach(chartData => { 
+                        chartsOptions.forEach(chart => { 
                             if(chart.id === chartData.id) { 
                                 chartData.chartOptions = chart 
                             }

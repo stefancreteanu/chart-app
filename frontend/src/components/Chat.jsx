@@ -34,7 +34,7 @@ const Chat = ({history}) => {
             socket.off();
         };
 
-    }, [history, isLoggedIn, token, username]); 
+    }, [history, isLoggedIn, token]); 
 
     return (
         <div className="chat-page">

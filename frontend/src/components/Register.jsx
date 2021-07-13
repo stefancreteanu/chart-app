@@ -11,7 +11,7 @@ const Register = ({history}) => {
     const [username, setUsername] = useState('')
     const [Gender, setGender] = useState('')
     const [showPass, setShowPass] = useState(false);
-    
+
     const regUser = () => {
         if(Gender === 'Male' || Gender === 'Female' || Gender === 'Other') {
             axios.post("http://localhost:5500/register", {
@@ -20,7 +20,7 @@ const Register = ({history}) => {
             email: Email,
             password: Password,
             username: username,
-            gender: Gender
+            gender: Gender,
             }).then((response) => {
                 if(response.data.message === "Success") {
                     history.push('/login');

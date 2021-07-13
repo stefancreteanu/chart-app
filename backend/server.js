@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const fs = require('fs');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const knex = require('knex');
@@ -34,13 +35,7 @@ const io = socketio(server, {
     }
 });
 
-const {
-    AVATAR_MALE_PLACEHOLDER,
-    AVATAR_FEMALE_PLACEHOLDER,
-} = require('./user/constants');
-
-app.use(express.static('public'));
-app.use('/avatar_placeholder', express.static('avatar_placeholder'));
+app.use('/uploads', express.static('uploads'));
 
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -63,8 +58,6 @@ io.use( async (socket, next) => {
     const data = await db.select('username').from('login').where('id', '=', id);
     const user = data[0];
     const userName = user.username;
-
-    console.log(userName);
 
     socket.emit('joined_user', userName);
 
@@ -110,7 +103,7 @@ app.post('/login', async (req, res) => {
 
 app.post('/register', async (req, res) => {
         try {
-            const { email, lastName, firstName, username, password, gender } = req.body;
+            const { email, lastName, firstName, username, password, gender} = req.body;
                 bcrypt.hash(password, saltRounds, (err, hash) => {
                     if(err) {
                         console.log(err + err);
@@ -125,11 +118,12 @@ app.post('/register', async (req, res) => {
                     }).into('login')
                         .returning('*')
                         .then(user => {
-                            console.log(user[0])
+                            console.log(user[0]);
                             res.json({
                                 message: "Success"
                             })
                     })
+                    
                 });
         } catch (err) {
             console.log(err);
@@ -139,16 +133,26 @@ app.post('/register', async (req, res) => {
 app.get('/profile', isAuthorized, async (req, res) => {
     try {       
         const id = req.user._id;
+        let fileName = '';
         const user = await db.select('firstname', 'lastname', 'email', 'username', 'gender').from('login').where('id', '=', id);
-        const avatar = await db.select('*').from('avatar').where('userid', '=', id);
-        const avData = avatar[0];
+        await db.select('*').from('avatar').where('userid', '=', id).then(res => {
+            if(res[0]) {
+                // console.log("found image", res[0]);
+                fileName = res[0].filename;
+            } else {
+                // console.log("image not found", res[0]);
+            }
+        });
+        // console.log('avatar', avatar);
         const data =  user[0];
         const email = data.email;
         const firstName = data.firstname;
         const lastName = data.lastname;
         const username = data.username;
         const gender = data.gender;
-        filename = avData.filename;
+        
+        // fileName = avatar[0].filename;
+
         res.json({
             id,
             email,
@@ -156,8 +160,8 @@ app.get('/profile', isAuthorized, async (req, res) => {
             lastName,
             username,
             gender,
-            filename
-        }).status(200);    
+            fileName
+        }).status(200);   
     } catch (err) {
         console.log(err);
     }
@@ -167,9 +171,29 @@ app.post('/upload', upload.single('file'), isAuthorized, async (req, res) => {
     try {
         const userId = req.user._id;
         const { filename, mimetype, size, path } = req.file;
-        console.log(userId)
-        console.log(req.file);
+ 
+        await db.select('*').from("avatar").where("userid", '=', userId).then(res => {
+            if (res[0]) {
+                fs.readdir("./uploads", (err, files) => {
+                    if (err) {
+                        console.log('error reading avatar directory: ', err);
+                    } else {
+                        files.forEach(file => {
+                            if (file === res[0].filename) {
+                                fs.unlink(`./uploads/${res[0].filename}`, (err) => {
+                                    if (err) {
+                                      console.log('error deleting avatar file: ', res[0].filename);
+                                    }
+                                });
+                            }
+                        })
+                    }
+                });
+            }
+        });
 
+        await db.delete().from('avatar').where('userid', '=', userId);
+    
         db.insert({
             filename: filename,
             filepath: path,
@@ -184,13 +208,9 @@ app.post('/upload', upload.single('file'), isAuthorized, async (req, res) => {
     }
 })
 
-app.get('/image/:userid/:filename', async (req, res) => {
+app.get('/uploads/:userid/:filename', async (req, res) => {
     try {
-        const { filename, userid} = req.params;
-        console.log(userid);
-        // const data = await db.select('gender').from('login').where('id', '=', userid);
-        // const gender = data[0];
-        // console.log(gender, userid);
+        const { filename, userid } = req.params;
         await db
             .select('*')
             .from('avatar')
@@ -224,7 +244,6 @@ app.post('/create-charts', async (req, res) => {
         const { labels, datasetData, datasetLabel, color, title, headers } = req.body;
         const token = headers.Authorization;
         const decoded = jwt.verify(token, SECRET);
-        console.log('success');
         let userId = decoded._id;
         await db.insert({
             labels: JSON.stringify(labels),
@@ -256,6 +275,73 @@ app.post('/delete-chart', async (req, res) => {
     try {
         const id = req.body.id;
         await db.delete().from('chart').where('id', '=', id);
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+app.post('/delete-picture', async (req, res) => {
+    try {
+        const SECRET = process.env.SECRET_TOKEN;
+        const { headers, avatar } = req.body;
+        const token = headers.Authorization;
+        const decoded = jwt.verify(token, SECRET);
+        let userId = decoded._id;
+        await db.delete().from('avatar').where('userid', '=', userId);
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+app.post('/change-username', async (req, res) => {
+    try {
+        const SECRET = process.env.SECRET_TOKEN
+        const { headers, username } = req.body;
+        const token = headers.Authorization;
+        const decoded = jwt.verify(token, SECRET);
+        let id = decoded._id;
+
+        await db('login').where('id', '=', id).update({username: username}).then(() => {
+            res.json({
+                message: 'success'
+            })
+        });
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+app.post('/change-name', async (req, res) => {
+    try {
+        const SECRET = process.env.SECRET_TOKEN
+        const { headers, firstname, lastname } = req.body;
+        const token = headers.Authorization;
+        const decoded = jwt.verify(token, SECRET);
+        let id = decoded._id;
+
+        await db('login').where('id', '=', id).update({firstname: firstname, lastname: lastname}).then(() => {
+            res.json({
+                message: 'success'
+            })
+        });
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+app.post('/change-email', async (req, res) => {
+    try {
+        const SECRET = process.env.SECRET_TOKEN
+        const { headers, email } = req.body;
+        const token = headers.Authorization;
+        const decoded = jwt.verify(token, SECRET);
+        let id = decoded._id;
+
+        await db('login').where('id', '=', id).update({email: email}).then(() => {
+            res.json({
+                message: 'success'
+            })
+        });
     } catch (err) {
         console.log(err);
     }
