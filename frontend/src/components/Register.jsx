@@ -8,24 +8,40 @@ const Register = ({history}) => {
     const [LastName, setLastName] = useState('')
     const [Email, setEmail] = useState('')
     const [Password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [username, setUsername] = useState('')
     const [Gender, setGender] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [showPass, setShowPass] = useState(false);
+    const [error, setError] = useState('');
+    const [lenghtErr, setLenghtErr] = useState('');
+    const [emailTaken, setEmailTaken] = useState('');
 
     const regUser = () => {
         if(Gender === 'Male' || Gender === 'Female' || Gender === 'Other') {
-            axios.post("http://localhost:5500/register", {
-            firstName: FirstName,
-            lastName: LastName,
-            email: Email,
-            password: Password,
-            username: username,
-            gender: Gender,
-            }).then((response) => {
-                if(response.data.message === "Success") {
-                    history.push('/login');
+            if(Password.length >= 7 && Password.length <= 15) {
+                if(Password === confirmPassword) {
+                    axios.post("http://localhost:5500/register", {
+                    firstName: FirstName,
+                    lastName: LastName,
+                    email: Email,
+                    password: Password,
+                    username: username,
+                    gender: Gender,
+                    number: phoneNumber
+                    }).then((response) => {
+                        if(response.data.message === "Success") {
+                            history.push('/login');
+                        } else if( response.data.message === 'This email is already taken.') {
+                            setEmailTaken(response.data.message);
+                        }
+                    })
+                } else {
+                    setError('Passwords do not match.');
                 }
-            })
+            } else {
+                setLenghtErr('The password must be between 7 and 15 characters.');
+            }
         }
     }
 
@@ -74,7 +90,15 @@ const Register = ({history}) => {
                                                 }}
                                                 required
                                             />
-                                        {/* <p className="error-message">{error}</p> */}
+                                        <input 
+                                            className="input" 
+                                            type="text" 
+                                            name="number"
+                                            placeholder="Phone Number"
+                                            onChange = {(e) => {
+                                                setPhoneNumber(e.target.value)
+                                            }}
+                                        />
                                     </div>
                                     <div className="nd-row">
                                         <input 
@@ -88,15 +112,25 @@ const Register = ({history}) => {
                                             required
                                         />
                                         <input 
-                                        className="input" 
-                                        type={showPass ? 'text' : 'password'}
-                                        name="password"
-                                        placeholder="Password*"
-                                        onChange = {(e) => {
-                                            setPassword(e.target.value)
-                                        }}
-                                        required
-                                    />
+                                            className="input" 
+                                            type={showPass ? 'text' : 'password'}
+                                            name="password"
+                                            placeholder="Password*"
+                                            onChange = {(e) => {
+                                                setPassword(e.target.value)
+                                            }}
+                                            required
+                                        />
+                                        <input 
+                                            className="input"
+                                            type={showPass ? 'text' : 'password'}
+                                            name="confirmPass"
+                                            placeholder="Confirm Password*"
+                                            onChange = {(e) => {
+                                                setConfirmPassword(e.target.value);
+                                            }}
+                                            required
+                                        />
                                         <select name="gender" className="input" defaultValue="Gender" onChange= {(e) => {setGender(e.target.value)}}>
                                             <option value="Gender" disabled>Gender</option>
                                             <option value="Male">Male</option>
@@ -104,6 +138,11 @@ const Register = ({history}) => {
                                             <option value="Other">Other</option>
                                         </select>
                                     </div>
+                                </div>
+                                <div className="error">
+                                    <p>{error}</p>
+                                    <p>{lenghtErr}</p>
+                                    <p>{emailTaken}</p>
                                 </div>
                                 <div className="check-area">
                                     <input type="checkbox" onClick={passwordVisibility}/>

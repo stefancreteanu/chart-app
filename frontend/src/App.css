@@ -132,8 +132,8 @@ body, html {
 }
 
 .form {
-  width: 900px;
-  height: 600px;
+  width: 1000px;
+  height: 650px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -155,7 +155,7 @@ body, html {
 
 .title {
   font-size: 3rem;
-  margin-bottom: 5rem;
+  margin-bottom: 2rem;
 }
 
 .logo {
@@ -225,6 +225,10 @@ body, html {
 }
 
 .st-row, .nd-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   margin: 25px;
   margin-bottom: 0;
 }
@@ -366,6 +370,13 @@ body, html {
   border: none;
   outline: none;
   border-bottom: 1px solid #5a5a5a;
+}
+
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .error-message {

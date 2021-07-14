@@ -9,6 +9,7 @@ import Dashboard from './components/Dashboard/Dashboard';
 import Chat from './components/Chat';
 import AuthContextProvider from "./hooks/useLoginStatus";
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import ChangePassword from "./components/ChangePassword";
 
 function App () {
   return (
@@ -20,6 +21,7 @@ function App () {
               <Route path='/' exact component={Home}/>
               <Route path='/login' exact component={Login} />
               <Route path='/register' exact component={Register} />
+              <Route path='/change-password' component={ChangePassword}/>
               <Route path='/profile' exact component={Profile} />
               <Route path='/dashboard' exact component={Dashboard} />
               <Route path='/chat' exact component={Chat}/>

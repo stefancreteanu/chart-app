@@ -16,6 +16,7 @@ const socketio = require('socket.io');
 const server = http.createServer(app);
 const multer = require('multer');
 const path = require('path');
+const e = require('cors');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -103,28 +104,37 @@ app.post('/login', async (req, res) => {
 
 app.post('/register', async (req, res) => {
         try {
-            const { email, lastName, firstName, username, password, gender} = req.body;
-                bcrypt.hash(password, saltRounds, (err, hash) => {
-                    if(err) {
-                        console.log(err + err);
-                    }
-                    db.insert({
-                        firstname: firstName,
-                        lastname: lastName,
-                        email: email,
-                        hash: hash,
-                        username: username,
-                        gender: gender
-                    }).into('login')
-                        .returning('*')
-                        .then(user => {
-                            console.log(user[0]);
-                            res.json({
-                                message: "Success"
-                            })
+            const { email, lastName, firstName, username, password, gender, number} = req.body;
+
+            await db.select('*').from('login').where('email', '=', email).then(user => {
+                if(user[0]) {
+                    res.json({
+                        message: 'This email is already taken.'
                     })
-                    
-                });
+                } else {
+                    bcrypt.hash(password, saltRounds, (err, hash) => {
+                        if(err) {
+                            console.log(err);
+                        }
+                        db.insert({
+                            firstname: firstName,
+                            lastname: lastName,
+                            email: email,
+                            hash: hash,
+                            username: username,
+                            gender: gender,
+                            number: number
+                        }).into('login')
+                            .returning('*')
+                            .then(() => {
+                                res.json({
+                                    message: "Success"
+                                })
+                        })
+                        
+                    });
+                }
+            })
         } catch (err) {
             console.log(err);
         }
@@ -137,21 +147,17 @@ app.get('/profile', isAuthorized, async (req, res) => {
         const user = await db.select('firstname', 'lastname', 'email', 'username', 'gender').from('login').where('id', '=', id);
         await db.select('*').from('avatar').where('userid', '=', id).then(res => {
             if(res[0]) {
-                // console.log("found image", res[0]);
                 fileName = res[0].filename;
             } else {
-                // console.log("image not found", res[0]);
+                console.log("image not found", res[0]);
             }
         });
-        // console.log('avatar', avatar);
         const data =  user[0];
         const email = data.email;
         const firstName = data.firstname;
         const lastName = data.lastname;
         const username = data.username;
         const gender = data.gender;
-        
-        // fileName = avatar[0].filename;
 
         res.json({
             id,
