@@ -28,6 +28,16 @@ body, html {
   align-items: center;
 }
 
+.user {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: left !important;
+}
+
+.user > img {
+  margin-right: 0.75rem;
+}
+
 .userCard {
   width: 70rem;
   height: 40rem;
@@ -71,6 +81,7 @@ body, html {
   object-fit: cover;
   border-radius: 70px;
   margin-bottom: 2rem;
+  margin: 0px;
 }
 
 .user-info {
@@ -114,13 +125,27 @@ body, html {
   height: 46px;
 }
 
-.check-area {
+.buttons-area {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.check-area > p {
+.comment-ta {
+  resize: none;
+  border-radius: 20px;
+  width: auto;
+  height: auto;
+  padding: 30px 0;
+}
+
+.check-area, .button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.check-area > p, .button > p, .chart-component-column > p {
   padding: 10px;
   margin-bottom: 0px;
 }
@@ -264,6 +289,13 @@ body, html {
   box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.5);
 }
 
+.charts-flex {
+  margin-top: 50px;
+  /* background-color: white; */
+  padding: 30px;
+  border-radius: 20px;
+}
+
 .chart {
   margin-top: 50px;
 }
@@ -277,7 +309,20 @@ body, html {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  background-color: #fff;
 }
+
+.chart-component-column {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #fff;
+  padding: 3rem;
+  margin-bottom: 2rem;
+  border-radius: 20px;
+  box-shadow: 0px 0px 30px 5px rgba(0, 0, 0, 0.5);
+}
+
 
 .round-btn {
   width: 30px;
@@ -330,6 +375,11 @@ body, html {
   align-items: center;
 }
 
+.chart-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
 .small-logo {
   width: 35px;
   height: 35px;
@@ -379,6 +429,85 @@ body, html {
   flex-direction: column;
 }
 
+.nav-profile-pic {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 70px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.profile-link {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex-direction: row !important;
+  padding: 0 10px 0 10px !important; 
+  border-radius: 20px !important;
+  transition: all 0.2s ease-out;
+}
+
+.navbar-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon {
+  color: rgba(255,255,255,.5);
+  transition: all 0.4s ease-out;
+}
+
+.bg {
+  margin: 0 !important;
+  padding: 0 !important;
+  transition: all 0.2s ease-out;
+}
+
+.bg:hover {
+  background-color: #5a5a5a96;
+  transition: all 0.2s ease-in;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  border-radius: 10px !important;
+}
+
+.big {
+  font-size: 22px;
+  margin: 0 10px 0 10px;
+}
+
+.dropdown-menu {
+  top: 30px !important;
+  left: -140px !important;
+  background-color: #343a40 !important;
+}
+
+.dropdown-divider {
+  border-top: 1px solid #99999985 !important;
+}
+
+.test {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-link:hover {
+  background-color: #6b6b6b86;
+  transition: all 0.2s ease-in;
+}
+
+.profile-link > p {
+  margin: 0 !important;
+  text-decoration: none !important;
+}
+
 .error-message {
   font-size: 15px;
   color: #ff0000;
@@ -395,10 +524,6 @@ label {
   position: absolute;
   z-index: -1;
 
-}
-
-.profile-pic {
-  margin: 0px;
 }
 
 .welcome-p {

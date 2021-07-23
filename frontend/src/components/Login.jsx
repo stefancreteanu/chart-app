@@ -74,6 +74,9 @@ const Login = () => {
                            <div>
                                 <p style={{display: wrongPass}} className="error-message">{error}</p>
                            </div>
+                           <div className="change-pass">
+                               <Link to="/change-password">Forgot password?</Link>
+                           </div>
                         </div>
                         <div className="check-area">
                             <input type="checkbox" onClick={passwordVisibility}/>

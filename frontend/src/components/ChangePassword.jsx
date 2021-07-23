@@ -5,9 +5,9 @@ const ChangePassword = ({history}) => {
     const {isLoggedIn} = useContext(AuthContext);
 
     useEffect(() => {
-        if(!isLoggedIn) {
-            history.push('/login');
-        }
+        // if(!isLoggedIn) {
+        //     history.push('/login');
+        // }
     }, [history, isLoggedIn]);
 
     return(

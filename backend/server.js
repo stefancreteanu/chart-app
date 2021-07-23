@@ -73,6 +73,7 @@ io.on('connect', (socket) => {
     })
 })
 
+// Route for logging a user
 app.post('/login', async (req, res) => {
     try {
         const data = await db.select('email', 'hash', 'id').from('login')
@@ -102,6 +103,7 @@ app.post('/login', async (req, res) => {
     }
 })
 
+// Route for registering a user
 app.post('/register', async (req, res) => {
         try {
             const { email, lastName, firstName, username, password, gender, number} = req.body;
@@ -130,8 +132,7 @@ app.post('/register', async (req, res) => {
                                 res.json({
                                     message: "Success"
                                 })
-                        })
-                        
+                        })                        
                     });
                 }
             })
@@ -140,6 +141,7 @@ app.post('/register', async (req, res) => {
         }
 })
 
+// Route for getting user data for profile page
 app.get('/profile', isAuthorized, async (req, res) => {
     try {       
         const id = req.user._id;
@@ -173,6 +175,7 @@ app.get('/profile', isAuthorized, async (req, res) => {
     }
 })
 
+// Route for uploading a profile picture
 app.post('/upload', upload.single('file'), isAuthorized, async (req, res) => {
     try {
         const userId = req.user._id;
@@ -214,6 +217,7 @@ app.post('/upload', upload.single('file'), isAuthorized, async (req, res) => {
     }
 })
 
+// Route for getting a profile picture
 app.get('/uploads/:userid/:filename', async (req, res) => {
     try {
         const { filename, userid } = req.params;
@@ -230,24 +234,22 @@ app.get('/uploads/:userid/:filename', async (req, res) => {
             })
             .catch(err => res
                 .status(404)
-                .json(
-                    {
-                        success: false, 
-                        message: 'not found', 
-                        stack: err.stack,
-                    }
-                ),
+                .json({
+                    success: false, 
+                    message: 'not found', 
+                    stack: err.stack,
+                }),
             );
     } catch (err) {
         console.log(err);
     }
 });
 
-
+// Create a chart route
 app.post('/create-charts', async (req, res) => {
     try {
         const SECRET = process.env.SECRET_TOKEN;
-        const { labels, datasetData, datasetLabel, color, title, headers } = req.body;
+        const { labels, datasetData, datasetLabel, color, title, chartType, headers } = req.body;
         const token = headers.Authorization;
         const decoded = jwt.verify(token, SECRET);
         let userId = decoded._id;
@@ -255,9 +257,10 @@ app.post('/create-charts', async (req, res) => {
             labels: JSON.stringify(labels),
             chartdata: JSON.stringify(datasetData),
             color: JSON.stringify(color),
-            datalabel: datasetLabel,
+            dataset: datasetLabel,
             userid: userId,
-            title: title
+            title: title,
+            charttype: chartType
         }).into('chart')
             .returning('*')
     } catch (err) {
@@ -265,10 +268,11 @@ app.post('/create-charts', async (req, res) => {
     }
 })
 
+// Get user chart route
 app.get('/user-charts', isAuthorized, async (req, res) => {
     try {
         const id = req.user._id;
-        const chart = await db.select('id', 'labels', 'chartdata', 'datalabel', 'color', 'title').from('chart').where('userid', '=', id);
+        const chart = await db.select('id', 'labels', 'chartdata', 'dataset', 'charttype', 'color', 'title').from('chart').where('userid', '=', id);
         res.json({
             chart
         }).status(200);
@@ -277,6 +281,7 @@ app.get('/user-charts', isAuthorized, async (req, res) => {
     }
 })
 
+// Delete chart route
 app.post('/delete-chart', async (req, res) => {
     try {
         const id = req.body.id;
@@ -286,6 +291,7 @@ app.post('/delete-chart', async (req, res) => {
     }
 })
 
+// Delete profile picture route
 app.post('/delete-picture', async (req, res) => {
     try {
         const SECRET = process.env.SECRET_TOKEN;
@@ -299,6 +305,7 @@ app.post('/delete-picture', async (req, res) => {
     }
 })
 
+// Change username route
 app.post('/change-username', async (req, res) => {
     try {
         const SECRET = process.env.SECRET_TOKEN
@@ -317,6 +324,7 @@ app.post('/change-username', async (req, res) => {
     }
 })
 
+// Change name route
 app.post('/change-name', async (req, res) => {
     try {
         const SECRET = process.env.SECRET_TOKEN
@@ -335,10 +343,11 @@ app.post('/change-name', async (req, res) => {
     }
 })
 
+// Change email route
 app.post('/change-email', async (req, res) => {
     try {
-        const SECRET = process.env.SECRET_TOKEN
         const { headers, email } = req.body;
+        const SECRET = process.env.SECRET_TOKEN
         const token = headers.Authorization;
         const decoded = jwt.verify(token, SECRET);
         let id = decoded._id;
@@ -348,6 +357,64 @@ app.post('/change-email', async (req, res) => {
                 message: 'success'
             })
         });
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+// Share a chart route
+app.post('/share-chart', async (req, res) => {
+    try {
+        const { id, shared } = req.body;
+
+        await db('chart').where('id', '=', id).update({shared: shared}).then(() => {
+            res.json({
+                message: 'success'
+            })
+        });
+
+        const data = await db.select('id', 'userid', 'labels', 'chartdata', 'dataset', 'charttype', 'color', 'title').from('chart').where('id', '=', id);
+        const chart = data[0];
+        let _userid =  chart.userid;
+        const userData = await db.select('firstname', 'lastname').from('login').where('id', '=', _userid);
+        const user = userData[0];
+
+        let fileName = '';
+
+        await db.select('*').from('avatar').where('userid', '=', _userid).then(res => {
+            if(res[0]) {
+                fileName = res[0].filename;
+            } else {
+                console.log("image not found", res[0]);
+            }
+        });
+
+        await db.insert({
+            labels: JSON.stringify(chart.labels),
+            chartdata: JSON.stringify(chart.chartdata),
+            color: JSON.stringify(chart.color),
+            dataset: chart.dataset,
+            userid: chart.userid,
+            title: chart.title,
+            charttype: chart.charttype,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            chartid: chart.id,
+            filename: fileName
+        }).into('sharedcharts')
+            .returning('*')
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+// Get a shared chart route
+app.get('/shared-chart', async (req, res) => {
+    try {
+        const chart = await db.select('*').from('sharedcharts');
+        res.json({
+            chart
+        }).status(200);
     } catch (err) {
         console.log(err);
     }
