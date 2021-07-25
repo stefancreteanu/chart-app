@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Bar, Doughnut, Line, Pie} from 'react-chartjs-2';
 import axios from 'axios';
-import Button from 'react-bootstrap/Button'
 import { useMediaPredicate } from 'react-media-hook'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faShare } from '@fortawesome/free-solid-svg-icons';
@@ -97,6 +96,8 @@ const FetchChart = () => {
             id: chartsId,
             shared: isShared
         })
+
+        console.log('test');
     }
 
     useEffect(() => {
@@ -116,16 +117,12 @@ const FetchChart = () => {
                         {...smallerThan767 && smallSize}
                         {...smallerThan567 && smallerSize}
                     />
-                    {/* {biggerThan768 && <Button variant="dark" onClick={() => deleteChart(chartData.id)} className="w-25">Delete Chart</Button>}
-                    {smallerThan767 && <Button variant="dark" onClick={() => deleteChart(chartData.id)} className="w-50">Delete Chart</Button>}
-                    {biggerThan768 && <Button variant="dark" onClick={() => shareChart(chartData.id)} className="w-25">Share chart</Button>}
-                    {smallerThan767 && <Button variant="dark" onClick={() => shareChart(chartData.id)} className="w-50">Share chart</Button>} */}
                     <div className="buttons-area">
-                        <div className="button">
+                        <div className="button" onClick={() => deleteChart(chartData.id)}>
                             <FontAwesomeIcon icon={faTrashAlt} />
                             <p>Delete the chart</p>
                         </div>
-                        <div className="button">
+                        <div className="button" onClick={() => shareChart(chartData.id)}>
                             <FontAwesomeIcon icon={faShare} />
                             <p>Share</p>
                         </div>
@@ -142,10 +139,16 @@ const FetchChart = () => {
                         {...smallerThan767 && smallSize}
                         {...smallerThan567 && smallerSize}
                     />
-                    {biggerThan768 && <Button variant="dark" onClick={() => deleteChart(chartData.id)} className="w-25">Delete Chart</Button>}
-                    {smallerThan767 && <Button variant="dark" onClick={() => deleteChart(chartData.id)} className="w-50">Delete Chart</Button>}
-                    {biggerThan768 && <Button variant="dark" onClick={() => shareChart(chartData.id)} className="w-25">Share chart</Button>}
-                    {smallerThan767 && <Button variant="dark" onClick={() => shareChart(chartData.id)} className="w-50">Share chart</Button>}
+                    <div className="buttons-area">
+                        <div className="button" onClick={() => deleteChart(chartData.id)}>
+                            <FontAwesomeIcon icon={faTrashAlt} />
+                            <p>Delete the chart</p>
+                        </div>
+                        <div className="button" onClick={() => shareChart(chartData.id)}>
+                            <FontAwesomeIcon icon={faShare} />
+                            <p>Share</p>
+                        </div>
+                    </div>
                 </div>
             )
         } else if (chartData._chartType === "Pie") {
@@ -158,10 +161,16 @@ const FetchChart = () => {
                         {...smallerThan767 && smallSize}
                         {...smallerThan567 && smallerSize}
                     />
-                    {biggerThan768 && <Button variant="dark" onClick={() => deleteChart(chartData.id)} className="w-25">Delete Chart</Button>}
-                    {smallerThan767 && <Button variant="dark" onClick={() => deleteChart(chartData.id)} className="w-50">Delete Chart</Button>}
-                    {biggerThan768 && <Button variant="dark" onClick={() => shareChart(chartData.id)} className="w-25">Share chart</Button>}
-                    {smallerThan767 && <Button variant="dark" onClick={() => shareChart(chartData.id)} className="w-50">Share chart</Button>}
+                    <div className="buttons-area">
+                        <div className="button" onClick={() => deleteChart(chartData.id)}>
+                                <FontAwesomeIcon icon={faTrashAlt} />
+                                <p>Delete the chart</p>
+                            </div>
+                            <div className="button" onClick={() => shareChart(chartData.id)}>
+                                <FontAwesomeIcon icon={faShare} />
+                                <p>Share</p>
+                            </div>
+                    </div>
                 </div>
             )
         } else if (chartData._chartType === "Doughnut") {
@@ -174,10 +183,16 @@ const FetchChart = () => {
                         {...smallerThan767 && smallSize}
                         {...smallerThan567 && smallerSize}
                     />
-                    {biggerThan768 && <Button variant="dark" onClick={() => deleteChart(chartData.id)} className="w-25">Delete Chart</Button>}
-                    {smallerThan767 && <Button variant="dark" onClick={() => deleteChart(chartData.id)} className="w-50">Delete Chart</Button>}
-                    {biggerThan768 && <Button variant="dark" onClick={() => shareChart(chartData.id)} className="w-25">Share chart</Button>}
-                    {smallerThan767 && <Button variant="dark" onClick={() => shareChart(chartData.id)} className="w-50">Share chart</Button>}
+                    <div className="buttons-area">
+                        <div className="button" onClick={() => deleteChart(chartData.id)}>
+                            <FontAwesomeIcon icon={faTrashAlt} />
+                            <p>Delete the chart</p>
+                        </div>
+                        <div className="button" onClick={() => shareChart(chartData.id)}>
+                            <FontAwesomeIcon icon={faShare} />
+                            <p>Share</p>
+                        </div>
+                    </div>
                 </div>
             )
         }

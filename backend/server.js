@@ -202,7 +202,7 @@ app.post('/upload', upload.single('file'), isAuthorized, async (req, res) => {
         });
 
         await db.delete().from('avatar').where('userid', '=', userId);
-    
+
         db.insert({
             filename: filename,
             filepath: path,
@@ -212,6 +212,8 @@ app.post('/upload', upload.single('file'), isAuthorized, async (req, res) => {
         }).into('avatar')
             .then(() => res.json({success: true, filename}))
             .catch(err => res.json ({success: false, message: 'upload failed', stack: err.stack}))
+
+        await db('sharedcharts').where('userid', '=', userId).update({filename: filename});
     } catch (err) {
         console.log(err);
     }
@@ -286,6 +288,7 @@ app.post('/delete-chart', async (req, res) => {
     try {
         const id = req.body.id;
         await db.delete().from('chart').where('id', '=', id);
+        await db.delete().from('sharedcharts').where('chartid', '=', id);
     } catch (err) {
         console.log(err);
     }
@@ -388,6 +391,16 @@ app.post('/share-chart', async (req, res) => {
                 console.log("image not found", res[0]);
             }
         });
+
+        let gender = '';
+
+        await db.select('gender').from('login').where('id', '=', _userid).then(res => {
+            if(res[0]) {
+                gender = res[0].gender;
+            } else {
+                console.log('gender not found', res[0]);
+            }
+        })
 
         await db.insert({
             labels: JSON.stringify(chart.labels),

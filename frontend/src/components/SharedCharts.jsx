@@ -4,6 +4,8 @@ import { useMediaPredicate } from 'react-media-hook'
 import {Bar, Doughnut, Line, Pie} from 'react-chartjs-2';
 import male_placeholder from '../imgs/male_placeholder.png';
 import female_placeholder from '../imgs/female_placeholder.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComment } from '@fortawesome/free-solid-svg-icons';
 
 const SharedCharts = () => {
     const [chartsOptions, setChartsOptions] = useState([]);
@@ -33,6 +35,10 @@ const SharedCharts = () => {
         setCommentPlaceholder('');
     }
 
+    const addPlaceholder = () => {
+        setCommentPlaceholder('Write a comment...');
+    }
+
     const getChart = () => {
         axios.get('http://localhost:5500/shared-chart')
             .then(res => {
@@ -49,8 +55,8 @@ const SharedCharts = () => {
                         data: x.chartdata.map(x => x.Data),
                         backgroundColor: x.color.map(x => x.Color),
                         borderWidth: 4
-                    }]}))
-    
+                    }]
+                }))
                 const ops = res.data.chart.map((x, key) => ({
                     key: {key},
                     responsive: true,
@@ -79,6 +85,7 @@ const SharedCharts = () => {
 
                 setChartsOptions(ops);
                 setChartsData(dc);
+                console.log(chartsData._filename);
 
             })
             .catch(err => {
@@ -106,7 +113,10 @@ const SharedCharts = () => {
                         {...smallerThan767 && smallSize}
                         {...smallerThan567 && smallerSize}
                     />
-                    <p contenteditable="true" onClick={removePlaceholder}>{commentPlaceholder}</p>
+                    <div className="comment-title">
+                        <span><FontAwesomeIcon icon={faComment}/> Comment</span>
+                    </div>
+                    <p className="comment-ta" contentEditable="true" onFocus={removePlaceholder} onBlur={addPlaceholder}>{commentPlaceholder}</p>
                 </div>
             )
         } else if (chartData._chartType === "Bar") {
@@ -123,6 +133,10 @@ const SharedCharts = () => {
                         {...smallerThan767 && smallSize}
                         {...smallerThan567 && smallerSize}
                     />
+                    <div className="comment-title">
+                        <span><FontAwesomeIcon icon={faComment}/> Comment</span>
+                    </div>
+                    <p className="comment-ta" contentEditable="true" onFocus={removePlaceholder} onBlur={addPlaceholder}>{commentPlaceholder}</p>
                 </div>
             )
         } else if (chartData._chartType === "Pie") {
@@ -139,6 +153,10 @@ const SharedCharts = () => {
                         {...smallerThan767 && smallSize}
                         {...smallerThan567 && smallerSize}
                     />
+                    <div className="comment-title">
+                        <span><FontAwesomeIcon icon={faComment}/> Comment</span>
+                    </div>
+                    <p className="comment-ta" contentEditable="true" onFocus={removePlaceholder} onBlur={addPlaceholder}>{commentPlaceholder}</p>
                 </div>
             )
         } else if (chartData._chartType === "Doughnut") {
@@ -155,6 +173,10 @@ const SharedCharts = () => {
                         {...smallerThan767 && smallSize}
                         {...smallerThan567 && smallerSize}
                     />
+                    <div className="comment-title">
+                        <span><FontAwesomeIcon icon={faComment}/> Comment</span>
+                    </div>
+                    <p className="comment-ta" contentEditable="true" onFocus={removePlaceholder} onBlur={addPlaceholder}>{commentPlaceholder}</p>
                 </div>
             )
         }

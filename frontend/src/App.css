@@ -50,6 +50,18 @@ body, html {
   background-color: #fff;
 }
 
+.comment-title {
+  text-align: center;
+  border-top: 1px solid #c0c0c0;
+  border-bottom: 1px solid #c0c0c0;
+  margin-bottom: 1rem;
+  padding: 0.25rem;
+}
+
+.comment-title > span {
+  font-weight: bold;
+}
+
 .color-card {
   background-color: #343a40;
   width: 350px;
@@ -134,15 +146,19 @@ body, html {
 .comment-ta {
   resize: none;
   border-radius: 20px;
-  width: auto;
-  height: auto;
-  padding: 30px 0;
+  border: 1px solid #b4b4b4;
+  outline: none;
+  width: 750px;
 }
 
 .check-area, .button {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.button {
+  cursor: pointer;
 }
 
 .check-area > p, .button > p, .chart-component-column > p {
